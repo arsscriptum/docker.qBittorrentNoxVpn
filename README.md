@@ -10,6 +10,10 @@ Docker container which runs the latest headless qBittorrent client with WebUI wh
 
 ## Build Docker Container
 
+We need to create a *deploy* directory, containing the files to be deployed in the package.
+
+![deploy](doc/img/deploy.png)
+
 Im using [CQtDeployer](https://github.com/arsscriptum/CQtDeployer) to gather the files required for the package.
 
 1. Install QT 6
@@ -25,7 +29,13 @@ mkdir tmp
 4. Run [CQtDeployer](https://github.com/arsscriptum/CQtDeployer)
 
 ```bash
-cqtdeployer -bin ./externals/qBittorrent/build/qbittorrent-nox -libDir ./tmp/libs -extraPlugin /home/gp/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
+cqtdeployer -bin ./externals/qBittorrent/build/qbittorrent-nox -libDir ./tmp/libs -extraPlugin /path/to/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
+```
+
+5. Build the container
+
+```bash
+$ ./build.sh "1.2.0"
 ```
 
 ## Docker Features
