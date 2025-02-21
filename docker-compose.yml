@@ -1,0 +1,39 @@
+services:
+  qbittorrentnox:
+    image: arsscriptum/qbittorrent-nox:latest
+    container_name: qbittorrentnox
+    privileged: true
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TEST_VERSION=7
+      - WEBUI_PORT_ENV=8080
+      - INCOMING_PORT_ENV=8999
+      - OPENVPN_CONFIG=my_expressvpn_canada_-_montreal_udp
+      - VPN_ENABLED=yes
+      - LAN_NETWORK=10.0.0.0/24
+      - NAME_SERVERS=1.1.1.1,1.0.0.1
+      - VPN_EXPECTED_COUNTRY="Canada"
+      - VPN_EXPECTED_CITY="Montreal"
+    logging:
+      driver: journald
+      options:
+        tag: "qbittorrentnox"
+    ports:
+      - 10.0.0.111:8080:8080
+      - 10.0.0.111:8999:8999
+      - 10.0.0.111:8999:8999/udp
+    volumes:
+      - /home/qbittorrentvpn/bufferzone:/bufferzone:rw
+      - /home/qbittorrentvpn/logs:/logs:rw
+      - /home/qbittorrentvpn/secrets:/secrets
+      - /home/qbittorrentvpn/scripts:/scripts
+      - /mnt/datassd/Configs/QBittorrentVPN:/config
+      - /home/qbittorrentvpn/downloads:/downloads
+      - /home/qbittorrentvpn/incomplete:/Incomplete
+      - /home/qbittorrentvpn/torrentfiles:/TorrentFiles
+      - /etc/timezone:/etc/timezone:ro
+    restart: unless-stopped

@@ -8,6 +8,19 @@ Docker container which runs the latest headless qBittorrent client with WebUI wh
 <img src="doc/img/logo_small.png" alt="qBittorrentVPN" width="64">
 
 
+## Build Docker Container
+
+Im using [CQtDeployer](https://github.com/arsscriptum/CQtDeployer) to gather the files required for the package.
+
+1. Install QT 6
+2. Build [qBittorrent](https://github.com/arsscriptum/qBittorrent) in [headless mode](https://github.com/arsscriptum/qBittorrent/blob/main/INSTALL)
+3. Install [CQtDeployer](https://github.com/arsscriptum/CQtDeployer)
+4. Run [CQtDeployer](https://github.com/arsscriptum/CQtDeployer)
+
+```bash
+cqtdeployer -bin ./build/qbittorrent-nox -libDir ./libs/  -libDir ./libs/Qt6/ -extraPlugin /home/gp/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
+```
+
 ## Docker Features
 * Base: Ubuntu 20.04
 * Always builds latest qBittorrent client
@@ -21,6 +34,7 @@ Docker container which runs the latest headless qBittorrent client with WebUI wh
 # Run container from Docker registry
 The container is available from the Docker registry and this is the simplest way to get it.
 To run the container use this command:
+
 
 
 ```bash
