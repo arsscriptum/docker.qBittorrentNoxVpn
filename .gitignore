@@ -1,4 +1,6 @@
 .env
+tmp/
+tmp/**
 deploy/
 deploy/**
 config/qBittorrent/data/

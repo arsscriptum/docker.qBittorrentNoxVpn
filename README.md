@@ -14,14 +14,22 @@ Im using [CQtDeployer](https://github.com/arsscriptum/CQtDeployer) to gather the
 
 1. Install QT 6
 2. Build [qBittorrent](https://github.com/arsscriptum/qBittorrent) in [headless mode](https://github.com/arsscriptum/qBittorrent/blob/main/INSTALL)
+3. Export Libraries
+
+```bash
+mkdir tmp
+./scripts/export-libs.sh ./externals/qBittorrent/build/qbittorrent-nox -p ./tmp/libs
+```
+
 3. Install [CQtDeployer](https://github.com/arsscriptum/CQtDeployer)
 4. Run [CQtDeployer](https://github.com/arsscriptum/CQtDeployer)
 
 ```bash
-cqtdeployer -bin ./externals/qBittorrent/build/qbittorrent-nox -libDir ./libs/  -libDir ./libs/Qt6/ -extraPlugin /home/gp/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
+cqtdeployer -bin ./externals/qBittorrent/build/qbittorrent-nox -libDir ./tmp/libs -extraPlugin /home/gp/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
 ```
 
 ## Docker Features
+
 * Base: Ubuntu 20.04
 * Always builds latest qBittorrent client
 * Size: 300MB
