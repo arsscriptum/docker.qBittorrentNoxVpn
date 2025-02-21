@@ -182,4 +182,5 @@ echo "--------------------"
 iptables -S
 echo "--------------------"
 
-exec /bin/bash /etc/qbittorrent/start.sh
+
+exec /bin/bash /opt/qbittorrent/qbittorrent-nox.sh --profile=/config

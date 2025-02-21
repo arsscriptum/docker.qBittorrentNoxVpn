@@ -5,7 +5,6 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 
 tmp_root=$(pushd "$SCRIPT_DIR/.." | awk '{print $1}')
 ROOT_DIR=$(eval echo -e "$tmp_root")
-ENV_FILE="$ROOT_DIR/.env"
 ROOT_DIRECTORY="$ROOT_DIR"
 SCRIPT_DIR="$ROOT_DIR/scripts"
 

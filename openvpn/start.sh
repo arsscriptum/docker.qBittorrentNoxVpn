@@ -248,8 +248,10 @@ if [[ $VPN_ENABLED == "yes" ]]; then
 	cd /config/openvpn
 	exec openvpn --config ${VPN_CONFIG} &
 	# give openvpn some time to connect
+	log_info "Sleep 5 seconds..."
 	sleep 5
-	#exec /bin/bash /etc/openvpn/openvpn.init start &
+	log_info "========================================"
+	log_info "Starting /etc/qbittorrent/iptables.sh..."
 	exec /bin/bash /etc/qbittorrent/iptables.sh
 else
 	exec /bin/bash /etc/qbittorrent/start.sh

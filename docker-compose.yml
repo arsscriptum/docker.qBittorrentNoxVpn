@@ -1,7 +1,7 @@
 services:
-  qbittorrentnox:
-    image: arsscriptum/qbittorrent-nox:latest
-    container_name: qbittorrentnox
+  qbittorrentvpn:
+    image: arsscriptum/qbittorrentvpn:latest
+    container_name: qbittorrentvpn
     privileged: true
     cap_add:
       - NET_RAW
@@ -21,7 +21,7 @@ services:
     logging:
       driver: journald
       options:
-        tag: "qbittorrentnox"
+        tag: "qbittorrentvpn"
     ports:
       - 10.0.0.111:8080:8080
       - 10.0.0.111:8999:8999
