@@ -7,6 +7,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     QBITTORRENT_CONFIG=/config \
     LD_LIBRARY_PATH=/usr/lib/qt6:/usr/local/lib:/opt/qt5.15.2/lib:/opt/qt5.15.2/lib
 
+# Create qbittorrent user and group
+RUN groupadd -r ${QBITTORRENT_USER} && useradd -r -g ${QBITTORRENT_USER} -m ${QBITTORRENT_USER}
+
+
 # Install system dependencies (except Qt6)
 RUN apt update && apt install -y \
     libboost-dev \
