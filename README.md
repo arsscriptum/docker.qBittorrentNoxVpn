@@ -18,7 +18,7 @@ Im using [CQtDeployer](https://github.com/arsscriptum/CQtDeployer) to gather the
 4. Run [CQtDeployer](https://github.com/arsscriptum/CQtDeployer)
 
 ```bash
-cqtdeployer -bin ./build/qbittorrent-nox -libDir ./libs/  -libDir ./libs/Qt6/ -extraPlugin /home/gp/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
+cqtdeployer -bin ./externals/qBittorrent/build/qbittorrent-nox -libDir ./libs/  -libDir ./libs/Qt6/ -extraPlugin /home/gp/Qt/6.8.2/gcc_64/plugins/tls -targetDir deploy
 ```
 
 ## Docker Features
