@@ -5,7 +5,7 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive \
     QBITTORRENT_USER=qbittorrent \
     QBITTORRENT_CONFIG=/config \
-    LD_LIBRARY_PATH=/usr/lib/qt6:/usr/local/lib:$LD_LIBRARY_PATH
+    LD_LIBRARY_PATH=/usr/lib/qt6:/usr/local/lib:/opt/qt5.15.2/lib:/opt/qt5.15.2/lib
 
 # Install system dependencies (except Qt6)
 RUN apt update && apt install -y \
@@ -20,8 +20,8 @@ RUN mkdir -p /usr/lib/qt6 /usr/local/lib
 COPY build/qbittorrent-nox /usr/bin/qbittorrent-nox
 
 # Copy all required Qt6 and ICU libraries from host
-COPY /home/gp/Qt/6.8.2/gcc_64/lib/libQt6*.so.6 /usr/lib/qt6/
-COPY /home/gp/Qt/6.8.2/gcc_64/lib/libicu*.so.73 /usr/lib/qt6/
+COPY libs/libQt6*.so.6 /usr/lib/qt6/
+COPY libs/libicu*.so.73 /usr/lib/qt6/
 
 # 🔥 Copy the locally stored libraries into the container
 COPY libs/libz.so.1.3.1 /usr/local/lib/
