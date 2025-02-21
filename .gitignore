@@ -3,3 +3,6 @@ deploy
 deploy/**
 config/qBittorrent/data/
 config/qBittorrent/data/**
+data/config/qBittorrent/data/
+data/config/qBittorrent/data/**
+*.lock
