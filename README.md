@@ -47,6 +47,13 @@ The container is available from the [DockerHub](https://hub.docker.com/repositor
 
 Personally, I use Portainer and Docker-Compose. I have a [docker-compose.yml](docker-compose.yml) file
 
+![dockercompose](doc/img/docker-compose.png)
+
+
+```bash
+/docker-compose-config/run_config.sh
+``` 
+
 
 ## Variables, Volumes, and Ports
 
