@@ -40,6 +40,8 @@ RUN chmod +x /etc/qbittorrent/*.sh /etc/qbittorrent/*.init /etc/openvpn/*.sh
 
 # Create directories for libraries
 RUN mkdir -p /opt/qbittorrent
+
+# Super Critical! My deploy directory here
 COPY deploy /opt/qbittorrent
 
 # Create necessary directories

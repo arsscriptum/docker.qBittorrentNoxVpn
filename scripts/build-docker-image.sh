@@ -6,94 +6,143 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 tmp_root=$(pushd "$SCRIPT_DIR/.." | awk '{print $1}')
 ROOT_DIR=$(eval echo -e "$tmp_root")
 ROOT_DIRECTORY="$ROOT_DIR"
-SCRIPT_DIR="$ROOT_DIR/scripts"
+SCRIPTS_DIRECTORY="$ROOT_DIR/scripts"
+DEPLOY_PATH="$ROOT_DIR/deploy"
+TMPLIBS_DIRECTORY="$ROOT_DIR/tmp/libs"
+EXTERNALS_DIRECTORY="$ROOT_DIR/externals"
+QBITTORRENT_DIRECTORY="$EXTERNALS_DIRECTORY/qBittorrent"
+VERSION_FILE="$QBITTORRENT_DIRECTORY/version.nfo"
 
-# variables for colors
-WHITE='\033[0;30m'
-YELLOW='\033[0;33m'
-YELLOWI='\033[3;33m'
-RED='\033[0;31m'
-IRED='\033[4;31m'
-NC='\033[0m' # No Color
-
-
-pushd "$ROOT_DIR" > /dev/null
-
-# Function to display usage information
-usage() {
-    echo -e "Usage: $0 <tag> [-p|--push]"
-    echo -e "  tag: Docker image tag (e.g., latest, v1.0)"
-    echo -e "  -p, --push: Push the image to Docker Hub"
+# =========================================================
+# function:     logs functions
+# description:  log messages to fils and console
+# =========================================================
+log_ok() {
+    echo -e " ✔️ ${WHITE}$1${NC}"
+}
+log_info() {
+    echo -e " ➡️ ${WHITE}$1${NC}"
+}
+log_warn() {
+    echo -e " ⚠️ ${YELLOW}$1${NC}"
+}
+log_error() {
+    CAT="error"
+    if [[ "$2" != "" ]]; then
+        CAT="$2"
+    fi
+    echo -e " ⛔ ${RED}[$CAT]${NC} ${YELLOW}$1${NC}"
+    popd > /dev/null
     exit 1
 }
 
 
-# Validate if tag is provided
-if [ -z "$1" ]; then
-    TAG="latest"
-else
-    TAG=$1
-fi
 
-PUSH_IMAGE=false
+list_docker_tags() {
+    local user="arsscriptum"
+    local repo="qbittorrentvpn"
+    local url="https://hub.docker.com/v2/repositories/$user/$repo/tags/"
 
-REPO_OWNER=$(git remote get-url origin | awk -F'[:/]' '{print $(NF-1)}')
-REPO_NAME=$(git remote get-url origin | sed -E 's#^.*/##; s#\.git$##')
-IMAGE_NAME=$(git remote get-url origin | awk -F'[:/.]' '{print $(NF-1)}')
+    # Fetch the list of tags
+    curl -s "$url" | jq -r '.results[].name' || echo "Error fetching tags"
+}
 
-echo -e "\n⚠ ${IRED}ENVIRONMENT VALUES${NC}\n${YELLOW}REPO_OWNER${NC} ➪ ${RED}$REPO_OWNER\n${NC}${YELLOW}REPO_NAME${NC} ➪ ${RED}$REPO_NAME\n${NC}${YELLOW}IMAGE_NAME${NC} ➪ ${RED}$IMAGE_NAME\n${NC}${YELLOW}TAG${NC} ➪ ${RED}$TAG\n${NC}"
 
-# Parse optional arguments
-if [ "$2" == "-p" ] || [ "$2" == "--push" ]; then
-    PUSH_IMAGE=true
-fi
+check_docker_tag() {
+    local tag="$1"
+    local user="arsscriptum"
+    local repo="qbittorrentvpn"
+    local url="https://hub.docker.com/v2/repositories/$user/$repo/tags/"
 
-# Validate if the user is in the docker group
-if ! groups "$USER" | grep -q "\bdocker\b"; then
-    echo -e " ❌ Error: User '$USER' is not in the 'docker' group."
-    echo -e "Add the user to the docker group with: sudo usermod -aG docker $USER"
-    exit 1
-fi
-
-# Build the Docker image
-IMAGE_ID="$REPO_OWNER/$IMAGE_NAME:$TAG"
-echo -e "${RED}  🛈${NC} ${YELLOWI}  Building Docker image: $IMAGE_NAME${NC}"
-docker build -t "$IMAGE_NAME" .
-
-if [ $? -ne 0 ]; then
-    echo -e " ❌ Error: Docker build failed."
-    exit 1
-fi
-
-# Optionally push the image
-if $PUSH_IMAGE; then
-    if ! docker info | grep -q "Username:"; then
-        echo -e " ❌ Error: Not logged into Docker Hub. Run 'docker login' and try again."
-        exit 1
+    if [[ -z "$tag" ]]; then
+        echo "Usage: check_docker_tag <tag>"
+        return 1
     fi
 
-    echo -e "${RED}  🛈${NC} ${YELLOWI}  Pushing Docker image: $IMAGE_ID${NC}"
-    docker push "$IMAGE_ID"
-
-    if [ $? -ne 0 ]; then
-        echo -e " ❌ Error: Failed to push Docker image."
-        exit 1
-    else 
-        echo -e " ✅ successfully pushed $IMAGE_ID"
+    # Fetch tags and check if the specified tag exists
+    if curl -s "$url" | jq -e --arg tag "$tag" '.results[].name | select(. == $tag)' >/dev/null; then
+        log_ok "Tag '$tag' exists in $user/$repo."
+        return 0
+    else
+        log_warn "Tag '$tag' does NOT exist in $user/$repo."
+        return 1
     fi
+}
 
-    if [[ "$TAG" != "latest" ]]; then 
-        echo -e "${RED}  🛈${NC} ${YELLOWI}Pushing \"latest\" tag: $REPO_OWNER/$IMAGE_NAME:latest${NC}"
-        docker push "$REPO_OWNER/$IMAGE_NAME:latest"
-    fi
 
-    if [ $? -ne 0 ]; then
-        echo -e "  ❌ Error: Failed to push Docker image."
-        exit 1
-    else 
-        echo -e " ✅ successfully pushed $REPO_OWNER/$IMAGE_NAME:latest"
-    fi
+
+if [[ ! -d "$DEPLOY_PATH" ]]; then 
+    log_error "MISSING DEPLOY PATH. Build using ./scripts/build-and-install.sh" 
+fi 
+
+
+pushd "$ROOT_DIRECTORY" > /dev/null
+VERSION_NUM="1.2.0"
+if [[ -f "$VERSION_FILE" ]]; then 
+    VERSION_NUM=$(cat "$VERSION_FILE")
+else 
+    log_warn "NO VERSION FILE at $VERSION_FILE" 
+fi 
+
+
+NEW_PATH=$(du -sh "$DEPLOY_PATH" | awk '{ print $2 }')
+DEPLOY_PATH_SIZE=$(du -sh "$DEPLOY_PATH" | awk '{ print $1 }')
+
+if [[ "$DEPLOY_PATH_SIZE" == "4.0K" ]]; then 
+    log_error "MISSING DEPLOY DATA in PATH $NEW_PATH. Build using ./scripts/build-and-install.sh" 
+fi 
+
+OWNER="arsscriptum"
+IMAGE_NAME="qbittorrentvpn"
+
+log_info "======================================================"
+log_info "OWNER          $OWNER"
+log_info "IMAGE_NAME     $IMAGE_NAME"
+log_info "VERSION_NUM    $VERSION_NUM"
+log_info "DEPLOY_PATH    $VERSION_NUM"
+log_info "DEPLOY_SIZE    $DEPLOY_PATH_SIZE"
+log_info "======================================================"
+
+
+# Stop the container if it's running
+if docker ps | grep -q "qbittorrent"; then
+    log_warn "Stopping qbittorrent container..."
+    docker stop "$IMAGE_NAME" > /dev/null 2>&1
 fi
 
-popd > /dev/null
-exit 0
+# Remove the container if it exists
+if docker ps -a | grep -q "qbittorrent"; then
+    log_warn "Removing qbittorrent container..."
+    docker rm "$IMAGE_NAME" > /dev/null 2>&1
+fi
+
+check_docker_tag "$VERSION_NUM"
+
+if [[ $? -eq 0 ]]; then
+    log_error "ALREADY A TAG $VERSION_NUM"
+fi
+
+# Start the new container
+log_info "BUILDING qbittorrent container $VERSION_NUM"
+
+docker build -t "$OWNER/$IMAGE_NAME:$VERSION_NUM" .
+
+docker push "$OWNER/$IMAGE_NAME:$VERSION_NUM" 
+
+docker build -t "$OWNER/$IMAGE_NAME:latest" .
+
+docker push "$OWNER/$IMAGE_NAME:latest" 
+ 
+
+log_info "checking $VERSION_NUM"
+check_docker_tag "$VERSION_NUM"
+
+if [[ $? -ne 0 ]]; then
+    log_error "no such tag"
+fi
+
+TAGS=$(list_docker_tags)
+
+for tag in $TAGS; do 
+    log_info "TAG: $tag" 
+done
