@@ -43,15 +43,25 @@ Docker container which runs the latest headless qBittorrent client with WebUI wh
 The container is available from the [DockerHub](https://hub.docker.com/repository/docker/arsscriptum/qbittorrentvpn/general) registry and this is the simplest way to get it.
 
 
-### Docker-Compose - Portainer
+## Docker-Compose - Portainer
 
 Personally, I use Portainer and Docker-Compose. I have a [docker-compose.yml](docker-compose.yml) file
 
 ![dockercompose](doc/img/docker-compose.png)
 
 
+### Instructions- Example
+
+To Run qbittorrent in a vpn, in a docker container using docker-compose, the road is not too bumpy. But you need to know your way around the place.
+
+Even tough I provided a [docker-compose.yml](./docker-compose-config/docker-compose.yml) exmple file, try to create the basic configuration using [this script](./docker-compose-config/create-compose-config.sh).
+
+#### create-compose-config.sh
+
+This will create the structure for youto run qBittorrenVPN
+
 ```bash
-/docker-compose-config/run_config.sh
+/docker-compose-config/run_config.sh /tmp/your_qbittorrent_home
 ``` 
 
 

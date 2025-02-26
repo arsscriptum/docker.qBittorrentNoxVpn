@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#+--------------------------------------------------------------------------------+
+#|                                                                                |
+#|   build-and-install.sh                                                         |
+#|                                                                                |
+#+--------------------------------------------------------------------------------+
+#|   Guillaume Plante <codegp@icloud.com>                                         |
+#|   Code licensed under the GNU GPL v3.0. See the LICENSE file for details.      |
+#+--------------------------------------------------------------------------------+
+
+
 SCRIPT_PATH=$(realpath "$BASH_SOURCE")
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 
