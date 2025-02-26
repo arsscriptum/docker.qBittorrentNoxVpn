@@ -178,3 +178,20 @@ This will start a container as described in the "Run container from Docker regis
 ## Torrenting
 
 Please read [this](doc/torrenting.md)
+
+
+## Added Functionalities
+
+![menu](doc/img/menu.png)
+
+### Get External IP Address
+
+![ip](doc/img/ip.png)
+
+### Speed Test
+
+![st](doc/img/st.png)
+
+## Test
+
+![test](doc/img/test.gif)
