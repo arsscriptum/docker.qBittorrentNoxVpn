@@ -54,21 +54,19 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          echo "::group::Prepare"
-          echo "::notice::Determine the Docker container version."
+          echo " ============================================================================"
+          echo " ============================================================================"
+          echo "[START_GROUP] Prepare"
+          echo "[NOTICE] Determine the Docker container version."
 
-          echo "::notice::GITHUB_REF is $GITHUB_REF"
-          echo "::notice::DOCKER_IMAGE_NAME ${{ env.DOCKER_IMAGE_NAME }}"
+          echo "[NOTICE] GITHUB_REF is $GITHUB_REF"
+          echo "[NOTICE] DOCKER_IMAGE_NAME ${{ env.DOCKER_IMAGE_NAME }}"
           VERSION=unknown
-          if [[ $GITHUB_REF =~ refs/tags/* ]]; then
-            echo "::notice::Git tag pushed: use tag as the version."
-            VERSION=${GITHUB_REF#refs/tags/}
-            LABEL_VERSION=${VERSION}
-            echo "VERSION:  $VERSION"
-            echo "LABEL_VERSION:  $VERSION"
-          fi
-
+          CURRENT_TAG=$(git tag | tail -n 1)
+          tags="${{ env.DOCKER_IMAGE_NAME }}:${CURRENT_TAG}"
           # Determine the Docker container tags.
+          TAGS="${{ env.DOCKER_IMAGE_NAME }}:${CURRENT_TAG}"
+          IS_RELEASE=yes
           TAGS="${{ env.DOCKER_IMAGE_NAME }}:${VERSION}"
           if [[ $VERSION =~ ^[0-9]+.[0-9]+.0$ ]]; then
             # For version with format X.Y.Z, we want to add additional tags:
@@ -81,49 +79,39 @@ jobs:
             fi
             MAJOR_MINOR=${V%.*}
             MAJOR=${MAJOR_MINOR%.*}
-            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR_MINOR}"
-            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR}"
+            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${MAJOR_MINOR}"
+            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${MAJOR}"
           fi
-          # Determine the release type.
-          if [[ $GITHUB_REF =~ refs/tags/* ]]; then
-              IS_RELEASE=yes
-              if [[ $GITHUB_REF =~ -pre\.[0-9]+ ]]; then
-                  RELEASE_TYPE="pre"
-              else
-                  RELEASE_TYPE="standard"
-              fi
-          else
-              IS_RELEASE=no
-              RELEASE_TYPE="n/a"
-          fi
+          MAJOR_MINOR=${V%.*}
+          MAJOR=${MAJOR_MINOR%.*}
+          TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR_MINOR}"
+          TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR}"
           # Print results.
-          echo "::group::Results"
-          echo "::notice::Github reference: $GITHUB_REF"
-          echo "::notice::Release: $IS_RELEASE"
-          echo "::notice::Release type: $RELEASE_TYPE"
-          echo "::notice::Docker container version: $VERSION"
-          echo "::notice::Docker container version label: $LABEL_VERSION"
-          echo "::notice::Docker container tag(s): $TAGS"
-          echo "::notice::GITHUB_OUTPUT: $GITHUB_OUTPUT"
-          echo "::endgroup::"
+          echo "[START_GROUP]Results"
+          echo "[NOTICE] Github reference: $GITHUB_REF"
+          echo "[NOTICE] Release: $IS_RELEASE"
+          echo "[NOTICE] Release type: $RELEASE_TYPE"
+          echo "[NOTICE] Docker container version: $VERSION"
+          echo "[NOTICE] Docker container version label: $LABEL_VERSION"
+          echo "[NOTICE] Docker container tag(s): $TAGS"
+          echo "[NOTICE] GITHUB_OUTPUT: $GITHUB_OUTPUT"
+          echo "[END_GROUP]"
           # Export outputs.
-          echo "is_release=${IS_RELEASE}" >> $GITHUB_OUTPUT
-          echo "release_type=${RELEASE_TYPE}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "label_version=${LABEL_VERSION}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
           #echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-          echo "::endgroup::"
+          echo "[END_GROUP]"
+          echo " ============================================================================"
+          echo " ============================================================================"
       - name: Check DockerHub Secrets
         if: ${{ steps.prep.outputs.is_release == 'yes' }}
         run: |
-          echo "::group::CheckDockerHubSecrets"
-          echo "::notice::Validating required DockerHub credentials [DOCKERHUB_USERNAME] and [DOCKERHUB_PASSWORD]"
+          echo "[START_GROUP]CheckDockerHubSecrets"
+          echo "[NOTICE] Validating required DockerHub credentials [DOCKERHUB_USERNAME] and [DOCKERHUB_PASSWORD]"
           if [[ -z "${{ secrets.DOCKERHUB_USERNAME }}" || -z "${{ secrets.DOCKERHUB_PASSWORD }}" ]]; then
             echo "::error::Missing DockerHub credentials! Ensure DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD are set in the repository secrets. https://github.com/arsscriptum/docker.baseimage/settings/secrets/actions"
             exit 1
           fi
-          echo "::endgroup::"
+          echo "[END_GROUP]"
           
       # Finally, build and push the images
       - name: Building Container Image
