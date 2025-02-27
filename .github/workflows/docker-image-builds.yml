@@ -66,29 +66,10 @@ jobs:
             LABEL_VERSION=${VERSION}
             echo "VERSION:  $VERSION"
             echo "LABEL_VERSION:  $VERSION"
-          elif [[ $GITHUB_REF =~ refs/heads/* ]]; then
-            #echo "::notice::Git commit pushed: use the commit SHA as the version."
-            #VERSION=${GITHUB_SHA::8}
-            #LABEL_VERSION=${VERSION}
-            #echo "VERSION:  $VERSION"
-            #echo "LABEL_VERSION:  $VERSION"
-            echo "::error::Unexpected GITHUB_REF: $GITHUB_REF"
-            exit 1
-          elif [[ $GITHUB_REF =~ refs/pull/* ]]; then
-            #echo "::notice::Pull request: use PR number as the version."
-            #VERSION=pr-${{ github.event.number }}
-            #LABEL_VERSION=${VERSION}
-            #echo "VERSION:  $VERSION"
-            #echo "LABEL_VERSION:  $VERSION"
-            echo "::error::Unexpected GITHUB_REF: $GITHUB_REF"
-            exit 1
-          else
-            echo "::error::Unexpected GITHUB_REF: $GITHUB_REF"
-            exit 1
           fi
 
           # Determine the Docker container tags.
-          TAGS="${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${VERSION}"
+          TAGS="${{ env.DOCKER_IMAGE_NAME }}:${VERSION}"
           if [[ $VERSION =~ ^[0-9]+.[0-9]+.0$ ]]; then
             # For version with format X.Y.Z, we want to add additional tags:
             #   - vX.Y
@@ -100,8 +81,8 @@ jobs:
             fi
             MAJOR_MINOR=${V%.*}
             MAJOR=${MAJOR_MINOR%.*}
-            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${MAJOR_MINOR}"
-            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${MAJOR}"
+            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR_MINOR}"
+            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR}"
           fi
           # Determine the release type.
           if [[ $GITHUB_REF =~ refs/tags/* ]]; then
