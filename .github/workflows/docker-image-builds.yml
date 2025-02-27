@@ -50,69 +50,14 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: false
-
-      - name: Prepare
-        id: prep
+      - name: Prepare1
+        id: Prepare1
         run: |
-          echo " ============================================================================"
-          echo " ============================================================================"
-          echo "[START_GROUP] Prepare"
-          echo "[NOTICE] Determine the Docker container version."
-
-          echo "[NOTICE] GITHUB_REF is $GITHUB_REF"
-          echo "[NOTICE] DOCKER_IMAGE_NAME ${{ env.DOCKER_IMAGE_NAME }}"
-          VERSION=unknown
-          CURRENT_TAG=$(git tag | tail -n 1)
-          tags="${{ env.DOCKER_IMAGE_NAME }}:${CURRENT_TAG}"
-          # Determine the Docker container tags.
-          TAGS="${{ env.DOCKER_IMAGE_NAME }}:${CURRENT_TAG}"
-          IS_RELEASE=yes
-          TAGS="${{ env.DOCKER_IMAGE_NAME }}:${VERSION}"
-          if [[ $VERSION =~ ^[0-9]+.[0-9]+.0$ ]]; then
-            # For version with format X.Y.Z, we want to add additional tags:
-            #   - vX.Y
-            #   - vX
-            V=${VERSION:1}
-            if [[ $V != "v" ]]; then
-              V=${VERSION}
-              echo "oups, removed wrong character... fixing..."
-            fi
-            MAJOR_MINOR=${V%.*}
-            MAJOR=${MAJOR_MINOR%.*}
-            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${MAJOR_MINOR}"
-            TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${{ fromJSON(matrix.info).tag_prefix }}-${MAJOR}"
-          fi
-          MAJOR_MINOR=${V%.*}
-          MAJOR=${MAJOR_MINOR%.*}
-          TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR_MINOR}"
-          TAGS="$TAGS,${{ env.DOCKER_IMAGE_NAME }}:${MAJOR}"
-          # Print results.
-          echo "[START_GROUP]Results"
-          echo "[NOTICE] Github reference: $GITHUB_REF"
-          echo "[NOTICE] Release: $IS_RELEASE"
-          echo "[NOTICE] Release type: $RELEASE_TYPE"
-          echo "[NOTICE] Docker container version: $VERSION"
-          echo "[NOTICE] Docker container version label: $LABEL_VERSION"
-          echo "[NOTICE] Docker container tag(s): $TAGS"
-          echo "[NOTICE] GITHUB_OUTPUT: $GITHUB_OUTPUT"
-          echo "[END_GROUP]"
-          # Export outputs.
-          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
-          #echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-          echo "[END_GROUP]"
-          echo " ============================================================================"
-          echo " ============================================================================"
-      - name: Check DockerHub Secrets
-        if: ${{ steps.prep.outputs.is_release == 'yes' }}
-        run: |
-          echo "[START_GROUP]CheckDockerHubSecrets"
-          echo "[NOTICE] Validating required DockerHub credentials [DOCKERHUB_USERNAME] and [DOCKERHUB_PASSWORD]"
-          if [[ -z "${{ secrets.DOCKERHUB_USERNAME }}" || -z "${{ secrets.DOCKERHUB_PASSWORD }}" ]]; then
-            echo "::error::Missing DockerHub credentials! Ensure DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD are set in the repository secrets. https://github.com/arsscriptum/docker.baseimage/settings/secrets/actions"
-            exit 1
-          fi
-          echo "[END_GROUP]"
-          
+          echo "[START_GROUP] PREPARE"
+          tags="arsscriptum/qbittorrentvpn:1.4.0"
+          TAG="arsscriptum/qbittorrentvpn:1.4.0"
+          VERSION="arsscriptum/qbittorrentvpn:1.4.0"
+          echo "[END_GROUP]" 
       # Finally, build and push the images
       - name: Building Container Image
         uses: docker/build-push-action@v6
