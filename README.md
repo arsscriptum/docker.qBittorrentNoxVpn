@@ -48,7 +48,7 @@ This will create the structure for youto run qBittorrenVPN
 
 
 
-1. Build and install <a href="https://github.com/arsscriptum/qBittorrent"><img style="border-top:5px;" alt="qBittorrent" src="doc/img/qBittorrent.png" ></a>
+1. Build and install <a href="https://github.com/arsscriptum/qBittorrent"><img style="border-top:5px;" alt="qBittorrent" src="doc/img/qBittorrent1.png" ></a>
 
 ```bash
 ./scripts/build-and-install.sh
