@@ -1,34 +1,15 @@
-<center><img src="doc/img/banner3.jpg" alt="banner3"></center>
+<center><img src="doc/img/stay.png" alt="banner3"></center>
+<center><img src="doc/img/qbittorrentvpn.gif" alt="banner3"></center>
 
-# qBittorrent with WebUI and OpenVPN
-
-Docker container which runs the latest headless qBittorrent client with WebUI while connecting to OpenVPN with iptables killswitch to prevent IP leakage when the tunnel goes down.
-
-
-<img src="doc/img/logo_small.png" alt="qBittorrentVPN" width="64">
+<center><img src="doc/img/logo_low.png" alt="banner3"></center>
 
 
-## Build Docker Container
-
-1. Build and install 
-
-```bash
-./scripts/build-and-install.sh
-```
-
-![1](doc/img/build-and-install.png)
-
-2. Build the container
-
-```bash
-./scripts/build-docker-image.sh
-```
-
-![2](doc/img/build-docker-image.png)
-
+<br><br><br>
 
 
 ## Docker Features
+
+This is a Docker container which runs the latest headless qBittorrent client with WebUI while connecting to OpenVPN with iptables killswitch to prevent IP leakage when the tunnel goes down.
 
 * Base: Ubuntu 20.04
 * Always builds latest qBittorrent client
@@ -63,6 +44,24 @@ This will create the structure for youto run qBittorrenVPN
 ```bash
 /docker-compose-config/run_config.sh /tmp/your_qbittorrent_home
 ``` 
+
+
+
+
+1. Build and install <a href="https://github.com/arsscriptum/qBittorrent"><img style="border-top:5px;" alt="qBittorrent" src="doc/img/qBittorrent.png" ></a>
+
+```bash
+./scripts/build-and-install.sh
+```
+
+2. Build the container
+
+```bash
+./scripts/build-docker-image.sh
+```
+
+![2](doc/img/build-docker-image.png)
+
 
 
 ## Variables, Volumes, and Ports
@@ -135,4 +134,5 @@ id <username>
 
 Please read [this](doc/torrenting.md)
 
-.
+
+<center><img src="doc/img/banner3.jpg" alt="banner3"></center>
