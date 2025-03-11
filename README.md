@@ -1,4 +1,4 @@
-<center><img src="doc/img/stay.png" alt="banner3"></center>
+<center><img src="doc/img/stay1.png" alt="banner3"></center>
 <center><img src="doc/img/qbittorrentvpn.gif" alt="banner3"></center>
 
 <center><img src="doc/img/logo_low.png" alt="banner3"></center>
